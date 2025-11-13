@@ -101,7 +101,7 @@ pub const CLIArgs = struct {
                 self.action = Action.OVERWRITE;
             } else if (eql(u8, args[yo], "-ls") or eql(u8, args[yo], "--list")) {
                 self.action = Action.LIST;
-            } else if (eql(u8, args[yo], "-r")) {
+            } else if (eql(u8, args[yo], "-r") or eql(u8, args[yo], "--remove")) {
                 if (yo + 1 >= args.len) {
                     printQuickHelp();
                     return error.MissingArgs;
