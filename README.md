@@ -16,13 +16,13 @@ Bolt is a command-line template management tool that lets you save and reuse fil
 ## Installation 🔧
 
 ### Option 1: Download Pre-built Binary (Recommended)
-
-Download the latest release for your platform from the [Releases page](https://github.com/yourusername/bolt/releases):
+https://github.com/nichtbruno/bolt/releases/download/v1.0.0/bolt-linux-x86_64
+Download the latest release for your platform from the [Releases page](https://github.com/nichtbruno/bolt/releases):
 
 **Linux:**
 ```bash
 # Download and install
-curl -L https://github.com/yourusername/bolt/releases/latest/download/bolt-linux-x86_64 -o bolt
+curl -L https://github.com/nichtbruno/bolt/releases/download/v1.0.0/bolt-linux-x86_64 -o bolt
 chmod +x bolt
 sudo mv bolt /usr/local/bin/
 ```
@@ -30,7 +30,7 @@ sudo mv bolt /usr/local/bin/
 **macOS:**
 ```bash
 # Download and install
-curl -L https://github.com/yourusername/bolt/releases/latest/download/bolt-macos-x86_64 -o bolt
+curl -L https://github.com/nichtbruno/bolt/releases/download/v1.0.0/bolt-macos-x86_64 -o bolt
 chmod +x bolt
 sudo mv bolt /usr/local/bin/
 ```
@@ -42,7 +42,7 @@ Download `bolt-windows-x86_64.exe` from releases and add it to your PATH.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/bolt.git
+git clone https://github.com/nichtbruno/bolt.git
 cd bolt
 
 # Build with Zig (requires Zig 0.11.0+)
