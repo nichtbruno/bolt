@@ -22,7 +22,7 @@ Download the latest release for your platform from the [Releases page](https://g
 **Linux:**
 ```bash
 # Download and install
-curl -L https://github.com/nichtbruno/bolt/releases/download/v1.0.0/bolt-linux-x86_64 -o bolt
+curl -L https://github.com/nichtbruno/bolt/releases/download/v1.0.1/bolt-linux-x86_64 -o bolt
 chmod +x bolt
 sudo mv bolt /usr/local/bin/
 ```
@@ -30,7 +30,7 @@ sudo mv bolt /usr/local/bin/
 **macOS:**
 ```bash
 # Download and install
-curl -L https://github.com/nichtbruno/bolt/releases/download/v1.0.0/bolt-macos-x86_64 -o bolt
+curl -L https://github.com/nichtbruno/bolt/releases/download/v1.0.1/bolt-macos-x86_64 -o bolt
 chmod +x bolt
 sudo mv bolt /usr/local/bin/
 ```
