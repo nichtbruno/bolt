@@ -52,7 +52,7 @@ pub fn init(allocator: Allocator) !void {
     }
 }
 
-pub fn file(allocator: Allocator, name: []const u8) !void {
+pub fn from_template(allocator: Allocator, name: []const u8) !void {
     const cd_path = try getCacheDir(allocator);
     defer allocator.free(cd_path);
     const cf_path = try std.fs.path.join(allocator, &.{cd_path, "cache.txt"});
@@ -62,17 +62,32 @@ pub fn file(allocator: Allocator, name: []const u8) !void {
     defer cfile.close();
 
     const exists = try utl.templateExists(allocator, cfile, name);
-    if (exists) |template_name| {
-        defer allocator.free(template_name);
+    if (exists) |temp_name| {
+        defer allocator.free(temp_name);
+
         var cdir = try std.fs.openDirAbsolute(cd_path, .{});
         defer cdir.close();
-        try cdir.copyFile(name, std.fs.cwd(), template_name, .{});
+
+        const kind = try utl.getType(cdir, name);
+        switch (kind.?) {
+            .file => { try file(cdir, temp_name, name); },
+            .directory => { try dir(allocator, cdir, temp_name, name); },
+            else => {},
+        }
     }
 }
 
-pub fn save_file(allocator: Allocator, path: []const u8, name: []const u8) !void {
-    if (!utl.fileExists(std.fs.cwd(), path)) return;
+fn file(cdir: std.fs.Dir, temp_name: []const u8, name: []const u8) !void {
+    try cdir.copyFile(name, std.fs.cwd(), temp_name, .{});
+    std.debug.print("Created file '{s}' from Template '{s}'.\n", .{temp_name, name});
+}
 
+pub fn dir(allocator: Allocator, cdir: std.fs.Dir, temp_name: []const u8, name: []const u8) !void {
+    try utl.copyDirRecursive(allocator, cdir, name, std.fs.cwd(), temp_name);
+    std.debug.print("Created directory '{s}' from Template '{s}'.\n", .{temp_name, name});
+}
+
+pub fn save_template(allocator: Allocator, path: []const u8, name: []const u8) !void {
     const cd_path = try getCacheDir(allocator);
     defer allocator.free(cd_path);
     const cf_path = try std.fs.path.join(allocator, &.{cd_path, "cache.txt"});
@@ -82,59 +97,43 @@ pub fn save_file(allocator: Allocator, path: []const u8, name: []const u8) !void
     defer cfile.close();
 
     const exists = try utl.templateExists(allocator, cfile, name);
-    if (exists) |template_path| {
-        allocator.free(template_path);
+    if (exists) |temp_path| {
+        allocator.free(temp_path);
     } else {
-        _ = try cfile.seekFromEnd(0);
-        _ = try cfile.writer().print("{s}|{s}|f\n", .{ path, name });
+        const kind = try utl.getType(std.fs.cwd(), path);
+        switch (kind.?) {
+            .file => {
+                if (!utl.fileExists(std.fs.cwd(), path)) return;
+                try save_file(cfile, cd_path, path, name);
+            },
+            .directory => {
+                var testfile = std.fs.cwd().openDir(path, .{}) catch return;
+                testfile.close();
+                try save_dir(allocator, cfile, cd_path, path, name);
+            },
+            else => {},
+        }
     }
+}
+
+pub fn save_file(cfile: std.fs.File, cd_path: []const u8, path: []const u8, name: []const u8) !void {
+    _ = try cfile.seekFromEnd(0);
+    _ = try cfile.writer().print("{s}|{s}|f\n", .{ path, name });
 
     var cdir = try std.fs.openDirAbsolute(cd_path, .{});
     defer cdir.close();
     try std.fs.cwd().copyFile(path, cdir, name, .{});
+    std.debug.print("Saved file '{s}' as Template '{s}'.\n", .{path, name});
 }
 
-pub fn dir(allocator: Allocator, name: []const u8) !void {
-    const cd_path = try getCacheDir(allocator);
-    defer allocator.free(cd_path);
-    const cf_path = try std.fs.path.join(allocator, &.{ cd_path, "cache.txt" });
-    defer allocator.free(cf_path);
-
-    var cfile: std.fs.File = try std.fs.openFileAbsolute(cf_path, .{ .mode = .read_write });
-    defer cfile.close();
-
-    const exists = try utl.templateExists(allocator, cfile, name);
-    if (exists) |template_name| {
-        defer allocator.free(template_name);
-        var cdir = try std.fs.openDirAbsolute(cd_path, .{});
-        defer cdir.close();
-        try utl.copyDirRecursive(allocator, cdir, name, std.fs.cwd(), template_name);
-    }
-}
-
-pub fn save_dir(allocator: Allocator, path: []const u8, name: []const u8) !void {
-    var testfile = std.fs.cwd().openDir(path, .{}) catch return;
-    testfile.close();
-
-    const cd_path = try getCacheDir(allocator);
-    defer allocator.free(cd_path);
-    const cf_path = try std.fs.path.join(allocator, &.{ cd_path, "cache.txt" });
-    defer allocator.free(cf_path);
-
-    var cfile: std.fs.File = try std.fs.openFileAbsolute(cf_path, .{ .mode = .read_write, });
-    defer cfile.close();
-
-    const exists = try utl.templateExists(allocator, cfile, name);
-    if (exists) |template_path| {
-        allocator.free(template_path);
-    } else {
-        _ = try cfile.seekFromEnd(0);
-        _ = try cfile.writer().print("{s}|{s}|d\n", .{ path, name });
-    }
+pub fn save_dir(allocator: Allocator, cfile: std.fs.File, cd_path: []const u8, path: []const u8, name: []const u8) !void {
+    _ = try cfile.seekFromEnd(0);
+    _ = try cfile.writer().print("{s}|{s}|d\n", .{ path, name });
 
     var cdir = try std.fs.openDirAbsolute(cd_path, .{});
     defer cdir.close();
     try utl.copyDirRecursive(allocator, std.fs.cwd(), path, cdir, name);
+    std.debug.print("Saved directory '{s}' from Template '{s}'.\n", .{path, name});
 }
 
 pub fn list(allocator: Allocator) !void {
@@ -229,7 +228,7 @@ pub fn remove(allocator: Allocator, name: []const u8) !void {
         }
     }
 
-    std.debug.print("Template {s} successfully removed.\n", .{name});
+    std.debug.print("Template '{s}' successfully removed.\n", .{name});
 }
 
 pub fn clear(allocator: Allocator) !void {

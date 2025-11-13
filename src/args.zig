@@ -14,19 +14,12 @@ const USAGE_MAN =
     \\  -h, --help
     \\      Display this help message and exit.
     \\
-    \\FILE TEMPLATES:
-    \\  -sf <file_path> <template_name>
-    \\      Save an existing file as a reusable template.
+    \\ALL TEMPLATES:
+    \\  -s <file_path / directory_path> <template_name>
+    \\      Save an existing file / directory as a reusable template.
     \\
-    \\  -f <template_name>
-    \\      Create a new file from a saved template.
-    \\
-    \\DIRECTORY TEMPLATES:
-    \\  -sd <directory_path> <template_name>
-    \\      Save an existing directory structure and contents as a template.
-    \\
-    \\  -d <template_name>
-    \\      Create a new directory structure from a saved template.
+    \\  -t <template_name>
+    \\      Create a new file / directory from a saved template.
     \\
     \\MANAGEMENT:
     \\  -ls, --list
@@ -40,16 +33,16 @@ const USAGE_MAN =
     \\
     \\EXAMPLES:
     \\  Save a file as template:
-    \\    bolt -sf ./config.json my_config
+    \\    bolt -s ./config.json my_config
     \\
     \\  Create file from template:
-    \\    bolt -f my_config
+    \\    bolt -t my_config
     \\
     \\  Save directory as template:
-    \\    bolt -sd ./project_structure react_starter
+    \\    bolt -s ./project_structure react_starter
     \\
     \\  Create directory from template:
-    \\    bolt -d react_starter
+    \\    bolt -t react_starter
     \\
     \\  List all templates:
     \\    bolt -ls
@@ -57,7 +50,7 @@ const USAGE_MAN =
 ;
 
 pub const Action = enum {
-    HELP, FILE, SAVE_FILE, DIR, SAVE_DIR, LIST, REMOVE, CLEAR,
+    HELP, SAVE, TEMPLATE, LIST, REMOVE, CLEAR,
 };
 
 const ArgParseError = error{ MissingArgs, InvalidArgs };
@@ -80,36 +73,21 @@ pub const CLIArgs = struct {
         while (yo < args.len and args[yo][0] == '-') : (yo += 1) {
             if (eql(u8, args[yo], "-h") or eql(u8, args[yo], "--help")) {
                 self.action = Action.HELP;
-            } else if (eql(u8, args[yo], "-f")) {
+            } else if (eql(u8, args[yo], "-t")) {
                 if (yo + 1 >= args.len) {
                     printQuickHelp();
                     return error.MissingArgs;
                 }
                 self.name = args[yo+1];
-                self.action = Action.FILE;
-            } else if (eql(u8, args[yo], "-sf")) {
+                self.action = Action.TEMPLATE;
+            } else if (eql(u8, args[yo], "-s")) {
                 if (yo + 2 >= args.len) {
                     printQuickHelp();
                     return error.MissingArgs;
                 }
                 self.path = args[yo+1];
                 self.name = args[yo+2];
-                self.action = Action.SAVE_FILE;
-            } else if (eql(u8, args[yo], "-d")) {
-                if (yo + 1 >= args.len) {
-                    printQuickHelp();
-                    return error.MissingArgs;
-                }
-                self.name = args[yo+1];
-                self.action = Action.DIR;
-            } else if (eql(u8, args[yo], "-sd")) {
-                if (yo + 2 >= args.len) {
-                    printQuickHelp();
-                    return error.MissingArgs;
-                }
-                self.path = args[yo+1];
-                self.name = args[yo+2];
-                self.action = Action.SAVE_DIR;
+                self.action = Action.SAVE;
             } else if (eql(u8, args[yo], "-ls") or eql(u8, args[yo], "--list")) {
                 self.action = Action.LIST;
             } else if (eql(u8, args[yo], "-r")) {

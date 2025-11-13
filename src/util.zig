@@ -6,6 +6,15 @@ pub fn fileExists(cwd: std.fs.Dir, file_name: []const u8) bool {
     return true;
 }
 
+pub fn getType(dir: std.fs.Dir, file_name: []const u8) !?std.fs.File.Kind {
+    const stat  = try dir.statFile(file_name);
+    return switch(stat.kind) {
+        .file => .file,
+        .directory => .directory,
+        else => null,
+    };
+}
+
 pub fn templateExists(allocator: Allocator, cache_file: std.fs.File, name: []const u8) !?[]const u8 {
     try cache_file.seekTo(0);
     const max_size = 10 * 1024 * 1024;

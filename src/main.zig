@@ -19,10 +19,8 @@ pub fn main() !void {
     try mon.init(allocator);
     switch (clia.action) {
         arg.Action.HELP => { arg.printMenu(); },
-        arg.Action.FILE => { try mon.file(allocator, clia.name); },
-        arg.Action.SAVE_FILE => { try mon.save_file(allocator, clia.path, clia.name); },
-        arg.Action.DIR => { try mon.dir(allocator, clia.name); },
-        arg.Action.SAVE_DIR => { try mon.save_dir(allocator, clia.path, clia.name); },
+        arg.Action.TEMPLATE => { try mon.from_template(allocator, clia.name); },
+        arg.Action.SAVE => { try mon.save_template(allocator, clia.path, clia.name); },
         arg.Action.LIST => { try mon.list(allocator); },
         arg.Action.REMOVE => { try mon.remove(allocator, clia.name); },
         arg.Action.CLEAR => { try mon.clear(allocator); },
