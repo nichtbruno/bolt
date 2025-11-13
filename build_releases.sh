@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="v1.0.0"
+VERSION="v1.0.1"
 mkdir -p releases
 
 echo "Building for Linux x86_64..."
