@@ -18,6 +18,9 @@ const USAGE_MAN =
     \\  -s <file_path / directory_path> <template_name>
     \\      Save an existing file / directory as a reusable template.
     \\
+    \\  -o <file_path / directory_path> <template_name>
+    \\      Overwrite a template under the same name
+    \\
     \\  -t <template_name>
     \\      Create a new file / directory from a saved template.
     \\
@@ -50,7 +53,7 @@ const USAGE_MAN =
 ;
 
 pub const Action = enum {
-    HELP, SAVE, TEMPLATE, LIST, REMOVE, CLEAR,
+    HELP, SAVE, TEMPLATE, OVERWRITE, LIST, REMOVE, CLEAR,
 };
 
 const ArgParseError = error{ MissingArgs, InvalidArgs };

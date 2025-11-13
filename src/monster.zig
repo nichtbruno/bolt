@@ -87,7 +87,7 @@ pub fn dir(allocator: Allocator, cdir: std.fs.Dir, temp_name: []const u8, name: 
     std.debug.print("Created directory '{s}' from Template '{s}'.\n", .{temp_name, name});
 }
 
-pub fn save_template(allocator: Allocator, path: []const u8, name: []const u8) !void {
+pub fn save_template(allocator: Allocator, path: []const u8, name: []const u8, overwrite: bool) !void {
     const cd_path = try getCacheDir(allocator);
     defer allocator.free(cd_path);
     const cf_path = try std.fs.path.join(allocator, &.{cd_path, "cache.txt"});

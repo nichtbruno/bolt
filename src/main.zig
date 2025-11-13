@@ -20,7 +20,8 @@ pub fn main() !void {
     switch (clia.action) {
         arg.Action.HELP => { arg.printMenu(); },
         arg.Action.TEMPLATE => { try mon.from_template(allocator, clia.name); },
-        arg.Action.SAVE => { try mon.save_template(allocator, clia.path, clia.name); },
+        arg.Action.SAVE => { try mon.save_template(allocator, clia.path, clia.name, false); },
+        arg.Action.OVERWRITE => { try mon.save_template(allocator, clia.path, clia.name, true); },
         arg.Action.LIST => { try mon.list(allocator); },
         arg.Action.REMOVE => { try mon.remove(allocator, clia.name); },
         arg.Action.CLEAR => { try mon.clear(allocator); },
