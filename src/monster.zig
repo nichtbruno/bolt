@@ -38,7 +38,7 @@ pub fn init(allocator: Allocator) !void {
     const cache_dir = try getCacheDir(allocator);
     defer allocator.free(cache_dir);
 
-    std.fs.makeDirAbsolute(cache_dir) catch |e| switch (e) {
+    std.fs.cwd().makePath(cache_dir) catch |e| switch (e) {
         error.PathAlreadyExists => {},
         else => return e,
     };
@@ -159,6 +159,12 @@ pub fn list(allocator: Allocator) !void {
     const content = try cfile.readToEndAlloc(allocator, max_size);
     defer allocator.free(content);
 
+    var check_lines = std.mem.tokenizeScalar(u8, content, '\n');
+    if (check_lines.next() == null) {
+        std.debug.print("No saved templates.\n", .{});
+        return;
+    }
+
     std.debug.print("Saved templates\n", .{});
     std.debug.print("---------------\n", .{});
 
@@ -168,8 +174,6 @@ pub fn list(allocator: Allocator) !void {
         _ = items.next();
         if (items.next()) |template_name| {
             if (items.next()) |kind| {
-                // const type_str = if (std.mem.eql(u8, kind, "f")) "file" else "directory";
-                // std.debug.print("  {s} ({s})\n", .{ template_name, type_str });
                 if (std.mem.eql(u8, kind, "f")) {
                     std.debug.print("  {s} (file)\n", .{ template_name });
                 } else {
