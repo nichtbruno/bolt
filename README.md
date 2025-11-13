@@ -16,7 +16,7 @@ Bolt is a command-line template management tool that lets you save and reuse fil
 ## Installation 🔧
 
 ### Option 1: Download Pre-built Binary (Recommended)
-https://github.com/nichtbruno/bolt/releases/download/v1.0.0/bolt-linux-x86_64
+
 Download the latest release for your platform from the [Releases page](https://github.com/nichtbruno/bolt/releases):
 
 **Linux:**
