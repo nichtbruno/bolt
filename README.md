@@ -15,12 +15,37 @@ Bolt is a command-line template management tool that lets you save and reuse fil
 
 ## Installation
 
+### Option 1: Download Pre-built Binary (Recommended)
+
+Download the latest release for your platform from the [Releases page](https://github.com/yourusername/bolt/releases):
+
+**Linux:**
+```bash
+# Download and install
+curl -L https://github.com/yourusername/bolt/releases/latest/download/bolt-linux-x86_64 -o bolt
+chmod +x bolt
+sudo mv bolt /usr/local/bin/
+```
+
+**macOS:**
+```bash
+# Download and install
+curl -L https://github.com/yourusername/bolt/releases/latest/download/bolt-macos-x86_64 -o bolt
+chmod +x bolt
+sudo mv bolt /usr/local/bin/
+```
+
+**Windows:**
+Download `bolt-windows-x86_64.exe` from releases and add it to your PATH.
+
+### Option 2: Build from Source
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/bolt.git
 cd bolt
 
-# Build with Zig
+# Build with Zig (requires Zig 0.11.0+)
 zig build -Doptimize=ReleaseFast
 
 # The binary will be in zig-out/bin/
@@ -114,15 +139,6 @@ bolt -s ~/.vimrc my_vimrc
 cd ~/new-setup
 bolt -t my_vimrc
 ```
-
-## Requirements
-
-- Zig compiler (0.11.0 or later)
-- Linux, macOS, or Windows
-
-## License
-
-[Add your license here]
 
 ## Contributing
 
