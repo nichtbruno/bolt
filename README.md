@@ -13,7 +13,7 @@ Bolt is a command-line template management tool that lets you save and reuse fil
 - 📁 **Save Files & Directories** - Turn any file or folder into a reusable template
 - ⚡ **Instant Creation** - Generate new files/directories from templates in seconds
 
-## Installation
+## Installation 🔧
 
 ### Option 1: Download Pre-built Binary (Recommended)
 
