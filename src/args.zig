@@ -19,7 +19,7 @@ const USAGE_MAN =
     \\      Save an existing file / directory as a reusable template.
     \\
     \\  -o <file_path / directory_path> <template_name>
-    \\      Overwrite a template under the same name
+    \\      Overwrite a template with a new file or file version
     \\
     \\  -t <template_name>
     \\      Create a new file / directory from a saved template.
@@ -91,6 +91,14 @@ pub const CLIArgs = struct {
                 self.path = args[yo+1];
                 self.name = args[yo+2];
                 self.action = Action.SAVE;
+            } else if (eql(u8, args[yo], "-o")) {
+                if (yo + 2 >= args.len) {
+                    printQuickHelp();
+                    return error.MissingArgs;
+                }
+                self.path = args[yo+1];
+                self.name = args[yo+2];
+                self.action = Action.OVERWRITE;
             } else if (eql(u8, args[yo], "-ls") or eql(u8, args[yo], "--list")) {
                 self.action = Action.LIST;
             } else if (eql(u8, args[yo], "-r")) {

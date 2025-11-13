@@ -98,21 +98,31 @@ pub fn save_template(allocator: Allocator, path: []const u8, name: []const u8, o
 
     const exists = try utl.templateExists(allocator, cfile, name);
     if (exists) |temp_path| {
-        allocator.free(temp_path);
-    } else {
-        const kind = try utl.getType(std.fs.cwd(), path);
-        switch (kind.?) {
-            .file => {
-                if (!utl.fileExists(std.fs.cwd(), path)) return;
-                try save_file(cfile, cd_path, path, name);
-            },
-            .directory => {
-                var testfile = std.fs.cwd().openDir(path, .{}) catch return;
-                testfile.close();
-                try save_dir(allocator, cfile, cd_path, path, name);
-            },
-            else => {},
+        defer allocator.free(temp_path);
+
+        if (!overwrite) {
+            std.debug.print("Template '{s}' already exists. Use -o flag to overwrite.\n", .{name});
+            return error.TemplateExists;
         }
+
+        try remove(allocator, name);
+
+        cfile.close();
+        cfile = try std.fs.openFileAbsolute(cf_path, .{ .mode = .read_write, });
+    }
+
+    const kind = try utl.getType(std.fs.cwd(), path);
+    switch (kind.?) {
+        .file => {
+            if (!utl.fileExists(std.fs.cwd(), path)) return;
+            try save_file(cfile, cd_path, path, name);
+        },
+        .directory => {
+            var testfile = std.fs.cwd().openDir(path, .{}) catch return;
+            testfile.close();
+            try save_dir(allocator, cfile, cd_path, path, name);
+        },
+        else => {},
     }
 }
 
